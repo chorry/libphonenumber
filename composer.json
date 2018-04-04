@@ -1,0 +1,27 @@
+{
+    "name"         : "chorry/libphonenumber",
+    "description"  : "Override phone carriers without pull requests to Google.",
+    "authors"      : [
+        {
+            "name"  : "Alexander Loutsenko",
+            "email" : "alex.chorry@gmail.com"
+        }
+    ],
+    "autoload"     : {
+        "psr-4" : {
+            "chr\\phoneNumber\\" : "src/"
+        }
+    },
+    "autoload-dev" : {
+        "psr-4" : {
+            "chr\\tests\\phoneNumber\\" : "tests/"
+        }
+    },
+    "require"      : {
+        "php"                            : ">=7.1",
+        "giggsey/libphonenumber-for-php" : "^8.9"
+    },
+    "require-dev"  : {
+        "phpunit/phpunit"           : "^4.8.35|^5.7|^6.0"
+    }
+}
