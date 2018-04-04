@@ -7,6 +7,9 @@ use libphonenumber\PhoneNumberToCarrierMapper;
 
 class CarrierMapper extends PhoneNumberToCarrierMapper
 {
+    /**
+     * @inheritdoc
+     */
     public function __construct($phonePrefixDataDirectory)
     {
         parent::__construct($phonePrefixDataDirectory);

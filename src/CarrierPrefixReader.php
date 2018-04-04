@@ -10,8 +10,14 @@ use libphonenumber\prefixmapper\MappingFileProvider;
 
 class CarrierPrefixReader extends PrefixFileReader
 {
+    /**
+     * @var PrefixFileReader
+     */
     private $originalReader;
 
+    /**
+     * @inheritdoc
+     */
     public function __construct($phonePrefixDataDirectory, PrefixFileReader $reader)
     {
         parent::__construct($phonePrefixDataDirectory);
