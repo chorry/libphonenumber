@@ -19,7 +19,8 @@
     },
     "require"      : {
         "php"                            : ">=7.1",
-        "giggsey/libphonenumber-for-php" : "^8.9"
+        "giggsey/libphonenumber-for-php" : "^8.9",
+        "symfony/console": "^4.0"
     },
     "require-dev"  : {
         "phpunit/phpunit"           : "^4.8.35|^5.7|^6.0"
