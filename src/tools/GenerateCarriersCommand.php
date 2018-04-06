@@ -55,12 +55,13 @@ class GenerateCarriersCommand extends Command
         );
 
         $prefixGenerator = new PrefixGenerator();
+        $writer = new CarrierWriter(fopen('carriers.php', 'wb'));
         foreach ($operators as $operator) {
-            print (string) $operator . "\n";
+            $output->writeln((string) $operator . "\n", OutputInterface::VERBOSITY_DEBUG);
             foreach ($operator->getRange() as $range) {
                 $prefixList = $prefixGenerator->generatePrefixes($range['from'], $range['to']);
                 $prefixList = array_fill_keys($prefixList, $operator->getName());
-                print_r($prefixList);
+                $writer->write($prefixList);
             }
         }
     }
@@ -90,7 +91,7 @@ class GenerateCarriersCommand extends Command
                 if (!isset($defOperators[$operator])) {
                     $defOperators[$operator] = new DefOperator($operator);
                 }
-                $defOperators[$operator]->addRange($code . $rangeStart, $code . $rangeEnd);
+                $defOperators[$operator]->addRange($defCode . $rangeStart, $defCode . $rangeEnd);
                 $codeFound = true;
             }
             if ($code !== '' && $codeFound && $defCode !== $code) {

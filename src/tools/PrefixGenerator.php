@@ -15,19 +15,25 @@ class PrefixGenerator
      * @return array
      * @throws InvalidArgumentException
      */
-    public function generatePrefixes($from, $to): array
+    public function generatePrefixes(string $from, string $to): array
     {
         if (\strlen($from) !== \strlen($to)) {
-            throw new InvalidArgumentException('Ranges must be of equal length');
+            throw new InvalidArgumentException(sprintf('Ranges must be of equal length, got %s and %s', $from, $to));
+        }
+        if ($from === $to) {
+            return [$from];
         }
 
         $ranges = [];
         $startNumber = $from;
+
+
         while (1) {
             if (null === $startNumber) {
                 $startNumber = $from;
             }
             $decimalPlace = $this->findDecimalPeakValue($startNumber, $to);
+
             $bigNumber = $this->getNextBigNumberByDecimalPlace($to, $decimalPlace);
 
             if ($this->checkForNinesAndZeroes($bigNumber, $to, $decimalPlace)) {
@@ -164,7 +170,7 @@ class PrefixGenerator
             if ($one[$i] !== $two[$i]) {
                 return $length - $i - 1;
                 if ($one[$i] === '0' && $two[$i] === '9') {
-                    print "We need to look deeper\n";
+                    // We need to look deeper
                 } else {
                     return $length - $i - 1;
                 }
