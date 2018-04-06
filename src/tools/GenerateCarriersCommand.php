@@ -5,7 +5,6 @@ namespace chr\phoneNumber\tools;
 
 
 use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -36,6 +35,13 @@ class GenerateCarriersCommand extends Command
             InputOption::VALUE_OPTIONAL,
             'DEF code string'
         );
+        $this->addOption(
+            'hasHeader',
+            null,
+            InputOption::VALUE_OPTIONAL,
+            'Whether csv has header or not',
+            true
+        );
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
@@ -44,7 +50,8 @@ class GenerateCarriersCommand extends Command
 
         $operators = $this->extractRecordsFromFile(
             fopen($fileSource, 'rb'),
-            (string) $input->getOption(self::DEFCODE)
+            (string) $input->getOption(self::DEFCODE),
+            (bool)$input->getOption('hasHeader')
         );
 
         $prefixGenerator = new PrefixGenerator();
@@ -62,20 +69,21 @@ class GenerateCarriersCommand extends Command
     /**
      * @param resource $fh
      * @param string   $code
+     * @param bool     $csvHasHeader
      *
      * @return DefOperator[]
      */
-    private function extractRecordsFromFile($fh, $code = ''): array
+    private function extractRecordsFromFile($fh, string $code = '', bool $csvHasHeader): array
     {
         $process = true;
-        $line = 0;
-
+        $codeFound = false;
         /** @var DefOperator[] $defOperators */
         $defOperators = [];
+        if ($csvHasHeader) {
+            fgets($fh); //consume header line
+        }
 
         while (($recordLine = fgets($fh)) && $process) {
-            ++$line;
-
             [$defCode, $rangeStart, $rangeEnd, $capacity, $operator, $geo] = str_getcsv($recordLine, ';');
             $operator = $this->processStringLine($operator);
             if ($this->filterDefCode($defCode, $code)) {
@@ -83,12 +91,13 @@ class GenerateCarriersCommand extends Command
                     $defOperators[$operator] = new DefOperator($operator);
                 }
                 $defOperators[$operator]->addRange($code . $rangeStart, $code . $rangeEnd);
+                $codeFound = true;
             }
-            if ($code !== '' && $defCode !== $code) {
-                //$process = false;
+            if ($code !== '' && $codeFound && $defCode !== $code) {
+                $process = false;
             }
-
         }
+
         return $defOperators;
     }
 
