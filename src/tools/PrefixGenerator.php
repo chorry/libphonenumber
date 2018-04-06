@@ -33,12 +33,12 @@ class PrefixGenerator
                 $startNumber = $from;
             }
             $decimalPlace = $this->findDecimalPeakValue($startNumber, $to);
-
             $bigNumber = $this->getNextBigNumberByDecimalPlace($to, $decimalPlace);
 
-            if ($this->checkForNinesAndZeroes($bigNumber, $to, $decimalPlace)) {
+            if ($this->checkForNinesAndZeroes($startNumber, $to, $decimalPlace+1)) {
+                $decimalPlace++;
                 $prefixStart = substr($startNumber, 0, \strlen($startNumber) - $decimalPlace);
-                $prefixEnd = substr($bigNumber, 0, \strlen($bigNumber) - $decimalPlace);
+                $prefixEnd = substr($to, 0, \strlen($to) - $decimalPlace);
                 $ranges = array_merge($ranges, $this->pullUpMinorDigits($prefixStart, $prefixEnd));
                 $ranges[] = $prefixEnd;
                 break;
@@ -49,6 +49,7 @@ class PrefixGenerator
                 $ranges[] = $to;
                 break;
             }
+
             $startNumber = $bigNumber;
         }
         return $ranges;
@@ -169,11 +170,6 @@ class PrefixGenerator
         for ($i = $offset; $i < $length; $i++) {
             if ($one[$i] !== $two[$i]) {
                 return $length - $i - 1;
-                if ($one[$i] === '0' && $two[$i] === '9') {
-                    // We need to look deeper
-                } else {
-                    return $length - $i - 1;
-                }
             }
         }
 
